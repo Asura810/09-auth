@@ -34,7 +34,12 @@ export async function fetchNoteById(id: string): Promise<Note> {
   });
   return response.data;
 }
-export async function checkSession() {
+export const checkSession = async () => {
   const cookieStore = await cookies();
-  return api.get('auth/session', { headers: { Cookie: cookieStore.toString() } });
-}
+
+  return api.get('auth/session', {
+    headers: {
+      Cookie: cookieStore.toString(),
+    },
+  });
+};
