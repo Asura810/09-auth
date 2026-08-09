@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { parseSetCookie } from 'next/dist/compiled/@edge-runtime/cookies';
+import { parseSetCookie } from 'cookie';
 import { checkSession } from './lib/api/serverApi';
 
 const privateRoutes = ['/profile', '/notes'];
@@ -33,9 +33,18 @@ export async function proxy(request: NextRequest) {
       if (setCookie) {
         const cookieArray = Array.isArray(setCookie) ? setCookie : [setCookie];
         for (const cookieStr of cookieArray) {
-          const parsedCookie = parseSetCookie(cookieStr);
-          if (parsedCookie) {
-            nextResponse.cookies.set(parsedCookie);
+          const parsed = parseSetCookie(cookieStr);
+          if (parsed.value !== undefined) {
+            nextResponse.cookies.set(parsed.name, parsed.value, {
+              path: parsed.path,
+              maxAge: parsed.maxAge,
+              expires: parsed.expires,
+              httpOnly: parsed.httpOnly,
+              secure: parsed.secure,
+              sameSite: parsed.sameSite,
+              domain: parsed.domain,
+              priority: parsed.priority,
+            });
           }
         }
       }
