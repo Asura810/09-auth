@@ -2,16 +2,19 @@ import { api } from './api';
 import type { Note } from '@/types/note';
 import type { User } from '@/types/user';
 import { cookies } from 'next/headers';
+
 export interface FetchNotesParams {
   page: number;
   perPage?: number;
   search?: string;
   tag?: string;
 }
+
 export interface FetchNotesResponse {
   notes: Note[];
   totalPages: number;
 }
+
 export async function fetchNotes(params: FetchNotesParams): Promise<FetchNotesResponse> {
   const cookieStore = await cookies();
   const response = await api.get<FetchNotesResponse>('/notes', {
@@ -20,6 +23,7 @@ export async function fetchNotes(params: FetchNotesParams): Promise<FetchNotesRe
   });
   return response.data;
 }
+
 export async function getMe(): Promise<User> {
   const cookieStore = await cookies();
   const response = await api.get<User>('/users/me', {
@@ -27,6 +31,7 @@ export async function getMe(): Promise<User> {
   });
   return response.data;
 }
+
 export async function fetchNoteById(id: string): Promise<Note> {
   const cookieStore = await cookies();
   const response = await api.get<Note>(`/notes/${id}`, {
@@ -34,6 +39,7 @@ export async function fetchNoteById(id: string): Promise<Note> {
   });
   return response.data;
 }
+
 export const checkSession = async () => {
   const cookieStore = await cookies();
 

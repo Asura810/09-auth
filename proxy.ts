@@ -6,14 +6,18 @@ import { checkSession } from './lib/api/serverApi';
 const privateRoutes = ['/profile', '/notes'];
 const publicRoutes = ['/sign-in', '/sign-up'];
 
+function matchesRoute(pathname: string, route: string) {
+  return pathname === route || pathname.startsWith(route + '/');
+}
+
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const cookieStore = await cookies();
   const accessToken = cookieStore.get('accessToken')?.value;
   const refreshToken = cookieStore.get('refreshToken')?.value;
 
-  const isPrivateRoute = privateRoutes.some(route => pathname.startsWith(route));
-  const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route));
+  const isPrivateRoute = privateRoutes.some(route => matchesRoute(pathname, route));
+  const isPublicRoute = publicRoutes.some(route => matchesRoute(pathname, route));
 
   if (!accessToken && !refreshToken) {
     if (isPrivateRoute) {
